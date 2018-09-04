@@ -25,7 +25,10 @@ setup(
     author='Joel Akeret',
     url='https://github.com/jakeret/tf_unet',
     packages=find_packages(PACKAGE_PATH, "test"),
-    package_dir={'tf_unet': 'tf_unet'},
+    package_dir={
+        'tf_unet': 'tf_unet',
+        "nachbarstrom": "nachbarstrom",
+    },
     include_package_data=True,
     install_requires=requires,
     license='GPLv3',

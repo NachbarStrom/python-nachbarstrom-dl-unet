@@ -43,6 +43,9 @@ class BaseDataProvider(object):
         self.a_min = a_min if a_min is not None else -np.inf
         self.a_max = a_max if a_min is not None else np.inf
 
+    def _next_data(self):
+        raise NotImplementedError
+
     def _load_data_and_label(self):
         data, label = self._next_data()
             

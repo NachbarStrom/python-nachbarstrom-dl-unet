@@ -1,4 +1,12 @@
 *.py[cod]
+.idea/
+env/
+notebooks/
+
+demo/unet_trained/
+demo/prediction/
+demo/bgs_example_data/
+demo/nbstrm_trained/
 
 # C extensions
 *.so

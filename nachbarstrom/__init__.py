@@ -1,0 +1,1 @@
+from .local_img_data_provider import LocalImgDataProvider
