@@ -3,3 +3,4 @@ numpy
 Pillow
 tensorflow-gpu
 matplotlib
+h5py
