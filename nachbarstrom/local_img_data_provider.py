@@ -24,11 +24,12 @@ class LocalImgDataProvider(BaseDataProvider):
         self._fnames_gen = cycle(self._chunk(imgs_fnames, 3))
 
     def _next_data(self):
-        original, suitable, unusable = next(self._fnames_gen)
-        data = self._fname_to_3_channel_array(original)
-        label_suitable = self._fname_to_binary_array(suitable)
-        label_unusable = self._fname_to_binary_array(unusable)
-        return data, np.concatenate((label_suitable, label_unusable), axis=2)
+        original_fname, suitable_fname, _ = next(self._fnames_gen)
+        original_img = self._fname_to_rgb_img_array(original_fname)
+        suitable_img = self._fname_to_binary_img_array(suitable_fname)
+        suitable_img_inverse = 1 - suitable_img
+        masks = np.concatenate((suitable_img, suitable_img_inverse), axis=2)
+        return original_img, masks
 
     @staticmethod
     def _chunk(seq: Sequence, size: int):
@@ -37,7 +38,7 @@ class LocalImgDataProvider(BaseDataProvider):
         """
         return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
-    def _fname_to_3_channel_array(self, fname: str) -> np.ndarray:
+    def _fname_to_rgb_img_array(self, fname: str) -> np.ndarray:
         full_fname = os.path.join(self._basedir, fname)
         img = Image.open(full_fname).convert("RGB")
         array = np.array(img)
@@ -45,18 +46,12 @@ class LocalImgDataProvider(BaseDataProvider):
         assert array.shape[2] == 3
         return array
 
-    def _fname_to_binary_array(self, fname: str) -> np.ndarray:
+    def _fname_to_binary_img_array(self, fname: str) -> np.ndarray:
         full_fname = os.path.join(self._basedir, fname)
         img = Image.open(full_fname).convert("1")  # black & white
         np_array = np.array(img).astype("float")
-        return np.expand_dims(np_array, axis=2)  # make 1 channel
+        return np.expand_dims(np_array, axis=2)  # shape: (x_dim, y_dim, 1)
 
     def _process_labels(self, label):
         """No further processing needed"""
         return label
-
-
-if __name__ == '__main__':
-    basedir = "/home/tomas/Desktop/labelbox-download"
-    provider = LocalImgDataProvider(basedir=basedir)
-    X, y = provider(2)
