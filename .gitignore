@@ -8,6 +8,7 @@ demo/unet_trained/
 demo/prediction/
 demo/bgs_example_data/
 demo/nbstrm_trained/
+bgs_example_data/
 
 # C extensions
 *.so
