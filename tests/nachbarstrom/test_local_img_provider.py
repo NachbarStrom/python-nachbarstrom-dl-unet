@@ -1,6 +1,8 @@
 import os
 
 import pytest
+from itertools import combinations
+import numpy as np
 
 from nachbarstrom import LocalImgDataProvider
 
@@ -31,3 +33,20 @@ def test_provider_y_sum_to_one(local_img_provider: LocalImgDataProvider):
         return (x + y == 1).all()
 
     assert sum_to_one(mask_1, mask_2)
+
+
+def test_provider_augments_images(local_img_provider: LocalImgDataProvider):
+    X, y = local_img_provider(5)
+    for img1, img2 in combinations(X, 2):
+        assert not np.array_equal(img1, img2)
+
+    for masks1, masks2 in combinations(y, 2):
+        assert not np.array_equal(masks1, masks2)
+
+
+def test_provder_has_channels(local_img_provider: LocalImgDataProvider):
+    assert local_img_provider.channels == 3
+
+
+def test_provider_has_n_class(local_img_provider: LocalImgDataProvider):
+    assert local_img_provider.n_class == 2

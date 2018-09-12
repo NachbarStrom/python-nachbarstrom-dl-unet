@@ -1,7 +1,12 @@
 click
+h5py
+matplotlib
 numpy
 Pillow
-tensorflow-gpu
-matplotlib
-h5py
 pytest
+scipy
+scikit-image
+six
+opencv-python
+imgaug
+typeguard
