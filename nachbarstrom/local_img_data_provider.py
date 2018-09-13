@@ -6,19 +6,20 @@ from typing import Sequence
 
 import numpy as np
 from PIL import Image
-from nachbarstrom.img_augmentation import ImgAugAugmentor
+from nachbarstrom.img_augmentation import ImgAugAugmentor, SegmentationAugmentor
 
 from tf_unet.image_util import BaseDataProvider
 
 
 class LocalImgDataProvider(BaseDataProvider):
     channels = 3
-    _IMG_AUGMENTOR = ImgAugAugmentor()
 
-    def __init__(self, a_min=0, a_max=255, basedir: str = None):
+    def __init__(self, a_min=0, a_max=255, basedir: str = None,
+                 augmentor: SegmentationAugmentor = ImgAugAugmentor()):
         super().__init__(a_min, a_max)
         assert os.path.isdir(basedir), f"{basedir} does not exist."
         self._basedir = basedir
+        self._img_augmentor = augmentor
         imgs_fnames = sorted(os.listdir(basedir))
         assert len(imgs_fnames) % 3 == 0, f"Number of imgs ({len(imgs_fnames)}) " \
                                           f"is not a multiple of 3."
@@ -35,8 +36,9 @@ class LocalImgDataProvider(BaseDataProvider):
         original_fname, suitable_fname, _ = next(self._fnames_gen)
         original_img = self._fname_to_rgb_img_array(original_fname)
         suitable_img = self._fname_to_binary_img_array(suitable_fname)
-        original_img, suitable_img = \
-            self._IMG_AUGMENTOR.transform_image(image=original_img, masks=suitable_img)
+        if self._img_augmentor:
+            original_img, suitable_img = self._img_augmentor.transform_image(
+                image=original_img, masks=suitable_img)
         return original_img, suitable_img
 
     def _fname_to_rgb_img_array(self, fname: str) -> np.ndarray:

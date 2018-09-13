@@ -27,7 +27,7 @@ class ImgAugAugmentor(SegmentationAugmentor):
     }
 
     @typechecked
-    def __init__(self, random_seed: int = None):
+    def __init__(self, random_seed: int = None, elastic_transf_sigma: int = 10):
         self._augmentor = iaa.Sequential([
             iaa.Fliplr(0.5), # horizontal flips
             iaa.Crop(percent=(0, 0.1)),
@@ -40,7 +40,8 @@ class ImgAugAugmentor(SegmentationAugmentor):
                 rotate=self._ROTATION_RANGE,
                 shear=(-8, 8),
                 mode="symmetric",
-            )
+            ),
+            iaa.ElasticTransformation(alpha=200, sigma=elastic_transf_sigma, mode="reflect"),
         ], random_order=True).to_deterministic()
         if random_seed:
             self._augmentor.reseed(random_seed, deterministic_too=True)
@@ -53,7 +54,7 @@ class ImgAugAugmentor(SegmentationAugmentor):
             f"{len(image.shape)} and {len(masks.shape)}."
         self._augmentor.reseed(deterministic_too=True)
         images_augmented = self._augmentor.augment_image(image)
-        masks_augmented = self._augmentor.augment_image(masks)
+        masks_augmented = self._augmentor.augment_image(masks).round()
         assert image.shape == images_augmented.shape
         assert masks.shape == masks_augmented.shape
         return images_augmented, masks_augmented

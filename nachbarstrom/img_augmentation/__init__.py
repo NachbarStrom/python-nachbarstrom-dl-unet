@@ -1,1 +1,1 @@
-from .segmentation_augmentator import SegmentationAugmentor, ImgAugAugmentor
+from .segmentation_augmentor import SegmentationAugmentor, ImgAugAugmentor
