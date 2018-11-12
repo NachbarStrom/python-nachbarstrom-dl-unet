@@ -6,13 +6,14 @@
 # Python 3.6
 # Tensorflow 1.10
 # Other combinations may break: https://github.com/tensorflow/tensorflow/issues/15604
+# REMINDER: Reboot the instance after running the script
 
 # setup Python3 with pip and venv
 sudo add-apt-repository ppa:deadsnakes/ppa -y
 sudo apt update
-sudo apt install python3.6
+sudo apt install python3.6 -y
 sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
-sudo apt install python3.6-venv
+sudo apt install python3.6-venv -y
 
 # Install CUDA
 wget https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda-repo-ubuntu1604-9-0-local_9.0.176-1_amd64-deb
@@ -38,10 +39,10 @@ rm -rf cuda/
 # Install Tensorflow-GPU
 python3.6 -m venv env
 source env/bin/activate
-python3.6 -m pip install tensorflow-gpu==1.10
+python3.6 -m pip install tensorflow-gpu==1.10 -y
 
 # Install and configure jupyter
-python3.6 -m pip install jupyter
+python3.6 -m pip install jupyter -y
 $(which jupyter) notebook --generate-config
 echo "c = get_config()" >> $HOME/.jupyter/jupyter_notebook_config.py
 echo "c.NotebookApp.ip = '*'" >> $HOME/.jupyter/jupyter_notebook_config.py
